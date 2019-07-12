@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Load TensorFlow.js -->
+    <script src="tfjs.js"> </script>
+    <script>
+        console.log("********************张量********************");
+        // 张量(Tensor)
+        // TensorFlow.js中数据的中心单位是张量：一组数值形成一个或多个维度的数组。 张量实例具有定义数组形状的形状属性。
+        const shape = [2, 3]; //2行，3列
+        const t1 = tf.tensor([1.0, 2.0, 3.0, 10.0, 20.0, 30.0], shape);
+        t1.print();
+
+        const t2 = tf.scalar(3.14);
+        t2.print();
+
+        const t3 = tf.tensor2d([[2, 3, 4], [3, 4, 5]]);
+        t3.print();
+
+        const t4 = tf.zeros([3, 3])
+        t4.print();
+
+        const t5 = tf.ones([3, 5])
+        t5.print();
+        // 变量(Variable)
+        // Variables变量是通过张量进行初始化得到的。不像Tensor的值不可变，变量的值是可变的。你可以使用变量的assign方法分配一个新的tensor到这个变量上，这是变量就会改变：
+        console.log("********************变量********************");
+        const initialValues = tf.zeros([5]);
+        const biases = tf.variable(initialValues);
+        biases.print();
+
+        const updateValues = tf.tensor1d([0, 1, 0, 1, 0]);
+        biases.assign(updateValues);
+        biases.print();
+    </script>
+    <script>
+        const a = tf.scalar(2);
+        const b = tf.scalar(4);
+        const c = tf.scalar(8);
+        
+        function predict(input) {
+            return tf.tidy(() => {
+                const x = tf.scalar(input);
+                const ax2 = a.mul(x.square());
+                const bx = b.mul(x);
+                const y = ax2.add(bx).add(c);
+
+                return y;
+            })
+        }
+
+        const result = predict(2);
+        result.print();
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
