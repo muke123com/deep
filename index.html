@@ -4,58 +4,111 @@
 <head>
     <!-- Load TensorFlow.js -->
     <script src="tfjs.js"> </script>
-    <script>
-        console.log("********************张量********************");
-        // 张量(Tensor)
-        // TensorFlow.js中数据的中心单位是张量：一组数值形成一个或多个维度的数组。 张量实例具有定义数组形状的形状属性。
-        const shape = [2, 3]; //2行，3列
-        const t1 = tf.tensor([1.0, 2.0, 3.0, 10.0, 20.0, 30.0], shape);
-        t1.print();
+    <script src="data.js"> </script>
+    <script src="index.js"> </script>
 
-        const t2 = tf.scalar(3.14);
-        t2.print();
-
-        const t3 = tf.tensor2d([[2, 3, 4], [3, 4, 5]]);
-        t3.print();
-
-        const t4 = tf.zeros([3, 3])
-        t4.print();
-
-        const t5 = tf.ones([3, 5])
-        t5.print();
-        // 变量(Variable)
-        // Variables变量是通过张量进行初始化得到的。不像Tensor的值不可变，变量的值是可变的。你可以使用变量的assign方法分配一个新的tensor到这个变量上，这是变量就会改变：
-        console.log("********************变量********************");
-        const initialValues = tf.zeros([5]);
-        const biases = tf.variable(initialValues);
-        biases.print();
-
-        const updateValues = tf.tensor1d([0, 1, 0, 1, 0]);
-        biases.assign(updateValues);
-        biases.print();
-    </script>
-    <script>
-        const a = tf.scalar(2);
-        const b = tf.scalar(4);
-        const c = tf.scalar(8);
-        
-        function predict(input) {
-            return tf.tidy(() => {
-                const x = tf.scalar(input);
-                const ax2 = a.mul(x.square());
-                const bx = b.mul(x);
-                const y = ax2.add(bx).add(c);
-
-                return y;
-            })
-        }
-
-        const result = predict(2);
-        result.print();
-    </script>
 </head>
 
 <body>
+    <canvas id="canvas" width="800" height="800"></canvas>
+    <script>
+        function l1() {
+            console.log("********************张量********************");
+            // 张量(Tensor)
+            // TensorFlow.js中数据的中心单位是张量：一组数值形成一个或多个维度的数组。 张量实例具有定义数组形状的形状属性。
+            const shape = [2, 3]; //2行，3列
+            const t1 = tf.tensor([1.0, 2.0, 3.0, 10.0, 20.0, 30.0], shape);
+            t1.print();
+
+            const t2 = tf.scalar(3.14);
+            t2.print();
+
+            const t3 = tf.tensor2d([[2, 3, 4], [3, 4, 5]]);
+            t3.print();
+
+            const t4 = tf.zeros([3, 3])
+            t4.print();
+
+            const t5 = tf.ones([3, 5])
+            t5.print();
+            // 变量(Variable)
+            // Variables变量是通过张量进行初始化得到的。不像Tensor的值不可变，变量的值是可变的。你可以使用变量的assign方法分配一个新的tensor到这个变量上，这是变量就会改变：
+            console.log("********************变量********************");
+            const initialValues = tf.zeros([5]);
+            const biases = tf.variable(initialValues);
+            biases.print();
+
+            const updateValues = tf.tensor1d([0, 1, 0, 1, 0]);
+            biases.assign(updateValues);
+            biases.print();
+        }
+    </script>
+    <script>
+        function l2() {
+            //
+            function predict(input) {
+                // y = a * x ^ 2 + b * x + c
+                return tf.tidy(() => {
+                    const x = tf.scalar(input);
+                    const ax2 = a.mul(x.square());
+                    const bx = b.mul(x);
+                    const y = ax2.add(bx).add(c);
+
+                    return y;
+                })
+            }
+
+            // Define constants: y = 2x^2 + 4x + 8
+            const a = tf.scalar(2);
+            const b = tf.scalar(4);
+            const c = tf.scalar(8);
+
+            const result = predict(2);
+            result.print();
+        }
+    </script>
+    <script>
+        async function l3() {
+            const a = tf.variable(tf.scalar(Math.random()));
+            const b = tf.variable(tf.scalar(Math.random()));
+            const c = tf.variable(tf.scalar(Math.random()));
+            const d = tf.variable(tf.scalar(Math.random()));
+
+            const data = await getTrainData();
+            drawData(data);
+            function predict(x) {
+                // 实现这个多项式方程  y = ax3 + bx2 + cx + d
+                return tf.tidy(() => {
+                    return a.mul(x.pow(tf.scalar(3)))
+                        .add(b.mul(x.square()))
+                        .add(c.mul(x))
+                        .add(d)
+                })
+            }
+            // 损失函数（loss function）：这个损失函数代表了给定多项式和数据的匹配程度。 损失函数值越小，那么这个多项式和数据就跟匹配。
+            function loss(predictions, labels) {
+                // 将labels（实际的值）进行抽象
+                // 然后获取平均数.
+                const meanSquareError = predictions.sub(labels).square().mean();
+                return meanSquareError;
+            }
+
+            // 定义训练循环
+            function train(xs, ys, numIterations = 75) {
+                // 定义优化器
+                const learningRate = 0.5;
+                const optimizer = tf.train.sgd(learningRate);
+
+                for (let iter = 0; iter < numIterations; iter++) {
+                    optimizer.minimize(() => {
+                        const predsYs = predict(xs);
+                        return loss(predsYs, ys);
+                    })
+                }
+            }
+        }
+        l3();
+    </script>
 </body>
 
 </html>
