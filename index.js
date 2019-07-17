@@ -1,16 +1,36 @@
 function drawData(data) {
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext("2d");
-    context.beginPath();
-    data.map((item) => {
-        let x = (1 + item['x'])*400;
-        let y = item['y']*400 + 200;
-        context.fillStyle='#000';
-        context.arc(x, y, 5, 0, Math.PI*2);
-        context.fill();
-        
-        context.closePath();
-    })
-    
-    
+    var myChart = echarts.init(document.getElementById('canvas'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        xAxis: {},
+        yAxis: {},
+        series: [{
+            symbolSize: 10,
+            data: data,
+            type: 'scatter'
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+}
+
+
+function drawDeepData(data) {
+    var myChart = echarts.init(document.getElementById('canvasDeep'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        xAxis: {},
+        yAxis: {},
+        series: [{
+            symbolSize: 10,
+            data: data,
+            type: 'scatter'
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
 }

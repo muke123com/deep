@@ -47,18 +47,12 @@ function generateData(numPoints, coeff, sigma = 0.04) {
     })
 }
 
-async function getTrainData() {
-    const trueCoefficients = { a: -.8, b: -.2, c: .9, d: .5 };
-    const trainingData = generateData(100, trueCoefficients);
-    const xs = trainingData.xs;
-    const ys = trainingData.ys;
+async function getTrainData(xs, ys) {
     const xvals = await xs.data();
     const yvals = await ys.data();
     
     const values = Array.from(yvals).map((y, i) => {
-        return { 'x': xvals[i], 'y': yvals[i] };
+        return [ xvals[i], yvals[i] ];
     });
-    
-    console.log(values);
     return values;
 }

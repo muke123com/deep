@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Load TensorFlow.js -->
+    <script src="tfjs.js"> </script>
+    <script src="echarts3.0.js"> </script>
+    <script src="data.js"> </script>
+    <script src="index.js"> </script>
+
+</head>
+
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <br>
+    <canvas id="canvasDeep" width="400" height="400"></canvas>
+    <script>
+        // 
+        const numIterations = 100;
+        const a = tf.variable(tf.scalar(Math.random()));
+        const b = tf.variable(tf.scalar(Math.random()));
+        const c = tf.variable(tf.scalar(Math.random()));
+        const d = tf.variable(tf.scalar(Math.random()));
+        function predict(x) {
+            // 实现这个多项式方程  y = ax3 + bx2 + cx + d
+            return tf.tidy(() => {
+                return a.mul(x.pow(tf.scalar(3)))
+                    .add(b.mul(x.square()))
+                    .add(c.mul(x))
+                    .add(d)
+            })
+        }
+        // 损失函数（loss function）：这个损失函数代表了给定多项式和数据的匹配程度。 损失函数值越小，那么这个多项式和数据就跟匹配。
+        function loss(predictions, labels) {
+            // 将labels（实际的值）进行抽象
+            // 然后获取平均数.
+            const meanSquareError = predictions.sub(labels).square().mean();
+            return meanSquareError;
+        }
+
+        // 定义训练循环
+        async function train(xs, ys, numIterations = 75) {
+            // 定义优化器
+            const learningRate = 0.5;
+            const optimizer = tf.train.sgd(learningRate);
+
+            for (let iter = 0; iter < numIterations; iter++) {
+                optimizer.minimize(  () => {
+                    const predsYs = predict(xs);
+                    
+                    
+
+                    // 绘制过程
+                    (async () => {
+                        // const yvals = await predsYs.data();
+                        console.log(predsYs);
+                        // const deepData = await getTrainData(xs, predsYs);
+                        // drawDeepData(deepData)
+                    })()
+
+                    return loss(predsYs, ys);
+                });
+                await tf.nextFrame();
+            }
+        }
+
+        async function learnCoefficients() {
+            const trueCoefficients = { a: -.8, b: -.2, c: .9, d: .5 };
+            const trainingData = generateData(100, trueCoefficients);
+            const xs = trainingData.xs;
+            const ys = trainingData.ys;
+            const data = await getTrainData(xs, ys);
+
+            drawData(data)
+            const predictionsBefore = predict(xs);
+            console.log(a.dataSync()[0]);
+            console.log(b.dataSync()[0]);
+            console.log(c.dataSync()[0]);
+            console.log(d.dataSync()[0]);
+            console.log("*****************************");
+            // Train the model!
+            await train(trainingData.xs, trainingData.ys, numIterations);
+
+            const predictionsAfter = predict(xs);
+
+            console.log(a.dataSync()[0]);
+            console.log(b.dataSync()[0]);
+            console.log(c.dataSync()[0]);
+            console.log(d.dataSync()[0]);
+            
+            const deepData = await getTrainData(xs, predictionsAfter);
+            drawDeepData(deepData)
+
+            predictionsBefore.dispose();
+            predictionsAfter.dispose();
+        }
+
+
+        learnCoefficients();
+    </script>
+</body>
+
+</html>
