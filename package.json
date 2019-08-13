@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/muke123com/deep/issues"
   },
-  "homepage": "https://github.com/muke123com/deep#readme"
+  "homepage": "https://github.com/muke123com/deep#readme",
+  "dependencies": {
+    "@tensorflow/tfjs": "^1.2.6",
+    "@tensorflow/tfjs-vis": "^1.1.0"
+  }
 }

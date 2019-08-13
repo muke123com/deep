@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../node_modules/@tensorflow/tfjs/dist/tf.js"> </script>
+    <script src="../node_modules/@tensorflow/tfjs-vis/dist/tfjs-vis.umd.min.js"> </script>
+    <script src="../echarts3.0.js"> </script>
+    <title>1</title>
+</head>
+
+<body>
+    <script>
+        const numIterations = 100;
+        const xs = tf.randomUniform([3, 3], -10, 10);
+        xs.print();
+
+        // 创建模型
+        function predict(input) {
+            return tf.tidy(() => {
+                const x = tf.scalar(input);
+                const ax2 = a.mul(x.square())
+                const bx = b.mul(x);
+
+                const y = ax2.add(bx).add(c);
+
+                return y;
+            })
+        }
+        const a = tf.scalar(2);
+        const b = tf.scalar(4);
+        const c = tf.scalar(8);
+
+        const result = predict(2);
+        result.print()
+
+        // 平均值
+        const average = tf.tidy(() => {
+            const y = tf.tensor1d([1.0, 2.0, 3.0, 4.0]);
+            const z = tf.ones([4]);
+
+            return y.sub(z).square().mean();
+        });
+        average.print()
+    </script>
+</body>
+
+</html>

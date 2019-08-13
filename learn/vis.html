@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../node_modules/@tensorflow/tfjs/dist/tf.js"> </script>
+    <script src="../node_modules/@tensorflow/tfjs-vis/dist/tfjs-vis.umd.min.js"> </script>
+    <title>vis</title>
+</head>
+
+<body>
+    <button type="button" id="show-examples">点击</button>
+    <script>
+        (function () {
+            const model = tf.sequential({
+                layers: [
+                    tf.layers.dense({ inputShape: [784], units: 32, activation: 'relu' }),
+                    tf.layers.dense({ units: 10, activation: 'softmax' }),
+                ]
+            });
+            const surface = { name: 'Layer Summary', tab: 'Model Inspection' };
+            tfvis.show.layer(surface, model.getLayer(undefined, 1));
+            tfvis.show.modelSummary(surface, model);
+        })();
+
+        // 直方图 
+        (async () => {
+            const tensor = tf.tensor1d([0, 0, 0, 0, 2, 3, 4, 2, 3, 1, 2, 4]);
+            const surface = { name: 'Values Distribution', tab: 'Model Inspection' };
+            await tfvis.show.valuesDistribution(surface, tensor);
+        })();
+        (async () => {
+            const data = [
+                { index: 0, value: 50 },
+                { index: 1, value: 100 },
+                { index: 2, value: 150 },
+            ];
+            // Render to visor
+            const surface = { name: 'Bar chart', tab: 'Charts' };
+            tfvis.render.barchart(surface, data);
+        })();
+        (async () => {
+            const data = Array(100).fill(0)
+                .map(x => Math.random() * 100 - (Math.random() * 50))
+            // Push some special values for the stats table.
+            data.push(Infinity);
+            data.push(NaN);
+            data.push(0);
+
+            const surface = { name: 'Histogram', tab: 'Charts' };
+            tfvis.render.histogram(surface, data);
+        })();
+        // 格子
+        (async () => {
+            const rows = 10;
+            const cols = 10;
+            const values = [];
+            for (let i = 0; i < rows; i++) {
+                const row = []
+                for (let j = 0; j < cols; j++) {
+                    row.push(Math.round(Math.random() * 50));
+                }
+                values.push(row);
+            }
+            const data = { values };
+
+            // Render to visor
+            const surface = { name: 'Confusion Matrix', tab: 'Charts' };
+            tfvis.render.confusionMatrix(surface, data);
+        })();
+        // 热力图
+        (async () => {
+            const cols = 20;
+            const rows = 20;
+            const values = [];
+            for (let i = 0; i < cols; i++) {
+                const col = []
+                for (let j = 0; j < rows; j++) {
+                    col.push(i * j)
+                }
+                values.push(col);
+            }
+            const data = { values };
+            // Render to visor
+            const surface = { name: 'Heatmap', tab: 'Charts' };
+            tfvis.render.heatmap(surface, data);
+        })();
+        (async () => {
+            const data = {
+                values: [[4, 2, 8, 20], [1, 7, 2, 10], [3, 3, 20, 13]],
+                xTickLabels: ['cheese', 'pig', 'font'],
+                yTickLabels: ['speed', 'smoothness', 'dexterity', 'mana'],
+            }
+            // Render to visor
+            const surface = { name: 'Heatmap w Custom Labels', tab: 'Charts' };
+            tfvis.render.heatmap(surface, data);
+        })();
+
+        (async () => {
+            const series1 = Array(100).fill(0)
+                .map(y => Math.random() * 50)
+                .map((y, x) => ({ x, y, }));
+
+            const series2 = Array(100).fill(0)
+                .map(y => Math.random() * 100)
+                .map((y, x) => ({ x, y, }));
+
+            const series = ['First', 'Second'];
+            const data = { values: [series1, series2], series }
+
+            const surface = { name: 'Line chart', tab: 'Charts' };
+            tfvis.render.linechart(surface, data);
+
+            const surface2 = { name: 'Scatterplot', tab: 'Charts' };
+            tfvis.render.scatterplot(surface2, data);
+        })();
+        // 表格
+        (async () => {
+            const headers = [
+                'Col 1',
+                'Col 2',
+                'Col 3',
+            ];
+            const values = [
+                [1, 2, 3],
+                ['4', '5', '6'],
+                ['<strong>7</strong>', true, false],
+            ];
+            const surface = { name: 'Table', tab: 'Charts' };
+            tfvis.render.table(surface, { headers, values });
+        })();
+        (async () => {
+
+        })();
+        (async () => {
+
+        })();
+        (async () => {
+
+        })();
+    </script>
+</body>
+
+</html>
